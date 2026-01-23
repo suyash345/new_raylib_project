@@ -1,6 +1,5 @@
-#include <iostream>
-#include "raylib.h"
-#include <raymath.h>
+#include <raylib.h>
+
 
 class Sprite {
 	public:
@@ -14,11 +13,12 @@ protected:
 	int speed;
 };
 
+
 class Player : public Sprite {
 public:
-	Player() {
-		texture = LoadTexture("../Images/spaceship.png");
-		speed = 500;
+	Player(Texture2D texture, Vector2 positon) {
+		this->texture = texture;
+		this->position = positon;
 	}
 	void Update(float delta_time) {
 		direction.x = int(IsKeyDown(KEY_D)) - int(IsKeyDown(KEY_A));
@@ -34,35 +34,3 @@ public:
 	}
 
 };
-
-class Game {
-public:
-	Game() {
-		InitWindow(WIDTH, HEIGHT, "2D Game");
-	}
-	void Run() {
-		Player p;
-		while (!WindowShouldClose()) {
-			float delta_time = GetFrameTime();
-			// Update
-			p.Update(delta_time);
-			// Begin Draw
-			BeginDrawing();
-			ClearBackground(BLACK);
-			p.Draw();
-			EndDrawing();
-		}
-		CloseWindow();
-	}
-
-	private:
-		static constexpr int WIDTH = 1920;
-		static constexpr int HEIGHT = 1080;
-};
-
-
-int main() {
-	Game game;
-	game.Run();
-
-}
