@@ -35,7 +35,7 @@ public:
 			
 			// Begin Draw
 			BeginDrawing();
-			ClearBackground(BLACK);
+			ClearBackground(BG_COLOR);
 
 			for(auto sprite : sprites) {
 				sprite->Draw();
@@ -44,9 +44,11 @@ public:
 		}
 
 		CloseWindow();
-	}
 
+	}
+	
 	private:
+		static constexpr Color BG_COLOR = {15,10,25,255};
 		static constexpr int WIDTH = 1920;
 		static constexpr int HEIGHT = 1080;
 		std::unordered_map<std::string,Texture2D> assets;
