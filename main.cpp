@@ -18,8 +18,10 @@ public:
 	}
 
 	~Game() {
-		for(auto sprite : sprites) {
-			UnloadTexture(assets[s])
+		for(auto& [asset, texture] : assets) {
+			UnloadTexture(texture);
+		}
+		for(auto& sprite : sprites) {
 			delete sprite;
 		}
 	}
