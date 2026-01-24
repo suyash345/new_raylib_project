@@ -5,7 +5,7 @@
 class Sprite {
 	public:
 		Sprite(Texture2D texture, Vector2 position)  : texture(texture), position(position), 
-															size{texture.width,texture.height} {
+															size{float(texture.width),float(texture.height)} {
 			
 		}
 		virtual void Update(float delta_time) = 0;
@@ -15,18 +15,18 @@ class Sprite {
 			position.y += direction.y * delta_time * speed;
 		}
 		virtual ~Sprite() = default;
-protected:
-	Vector2 direction = {0.0f,0.0f};
-	Texture2D texture;
-	Vector2 position = {100.0f,100.0f};
-	float speed = 500.0f;
-	Vector2 size = {0.0f,0.0f}; 
+	protected:
+		Vector2 direction = {0.0f,0.0f};
+		Texture2D texture;
+		Vector2 position = {100.0f,100.0f};
+		float speed = 500.0f;
+		Vector2 size = {0.0f,0.0f}; 
 };
 
 
 class Player : public Sprite {
 public:
-	Player(Texture2D texture, Vector2 position) : Sprite (texture, position) {
+	Player(Texture2D texture, Vector2 position, shoot_laser) : Sprite (texture, position), shoot_laser(shoot_laser){
 
 	}
 	virtual ~Player() = default;
@@ -53,5 +53,8 @@ public:
 		position.x = Clamp(position.x,0,Config::WIDTH-size.x);
 		position.y = Clamp(position.y,0,Config::HEIGHT-size.y);
 	}
+
+	private:
+		shoot_laser;
 
 };
