@@ -1,8 +1,13 @@
-#include <raylib.h>
+#pragma once
 
+#include "Config.h"
 
 class Sprite {
 	public:
+		Sprite(Texture2D texture, Vector2 position)  : texture(texture), position(position), 
+															size{texture.width,texture.height} {
+			
+		}
 		virtual void Update(float delta_time) = 0;
 		virtual void Draw() = 0;
 		virtual void Move(float delta_time) {
@@ -14,15 +19,15 @@ protected:
 	Vector2 direction = {0.0f,0.0f};
 	Texture2D texture;
 	Vector2 position = {100.0f,100.0f};
-	float speed = 200.0f;
+	float speed = 500.0f;
+	Vector2 size = {0.0f,0.0f}; 
 };
 
 
 class Player : public Sprite {
 public:
-	Player(Texture2D texture, Vector2 position) {
-		this->texture = texture;
-		this->position = position;
+	Player(Texture2D texture, Vector2 position) : Sprite (texture, position) {
+
 	}
 	virtual ~Player() = default;
 	void Input() {
@@ -39,12 +44,14 @@ public:
 	void Update(float delta_time) {
 		Input();
 		Move(delta_time);
+		Constriant();
 	}
 	void Draw() {
 		DrawTexture(texture, position.x, position.y, WHITE);
 	}
 	void Constriant() {
-
+		position.x = Clamp(position.x,0,Config::WIDTH-size.x);
+		position.y = Clamp(position.y,0,Config::HEIGHT-size.y);
 	}
 
 };
