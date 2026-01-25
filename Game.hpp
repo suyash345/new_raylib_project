@@ -30,7 +30,7 @@ public:
 	}
 
 	void CreateMeteor() { // cant pass this in direction, as it is a part of the class, and needs a "this" keyword. Therefore, you need to either make it static or use a lambda which then calls the function.
-		std::cout << "Create Meteor" << std::endl;
+		meteors.emplace_back(Meteor(assets["meteor"]);
 	}
 
 	void ShootLaser(Vector2 pos) {
@@ -44,6 +44,10 @@ public:
 		meteor_timer.Update();
 		for(auto& sprite : sprites) {
 			sprite->Update(delta_time);
+		}
+
+		for (auto& meteor : meteors) {
+			meteors->Update();
 		}
 
 
@@ -86,6 +90,7 @@ public:
 	private:
 		std::unordered_map<std::string,Texture2D> assets;
 		std::vector<Laser> lasers;
+		std::vector<Meteor> meteors;
 
 		std::vector<Sprite*> sprites;
 		std::vector<Star> stars;
