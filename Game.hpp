@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Sprite.hpp"
+#include <algorithm>
 
+#include "Sprite.hpp"
 
 struct Star {
 	Vector2 position;
@@ -16,8 +17,8 @@ public:
 
 		meteor_timer = Timer(Config::METEOR_TIMER_DURATION, true, true, [this]() {CreateMeteor();});
 
-		Player* p = new Player(assets["player"], Vector2{ Config::WIDTH / 2,Config::HEIGHT / 2 }, [this](Vector2 pos) { this->ShootLaser(pos); });
-		sprites.push_back(p);
+		player = new Player(assets["player"], Vector2{ Config::WIDTH / 2,Config::HEIGHT / 2 }, [this](Vector2 pos) { this->ShootLaser(pos); });
+		sprites.push_back(player);
 	}
 
 	~Game() {
@@ -30,7 +31,7 @@ public:
 	}
 
 	void CreateMeteor() { // cant pass this in direction, as it is a part of the class, and needs a "this" keyword. Therefore, you need to either make it static or use a lambda which then calls the function.
-		meteors.emplace_back(Meteor(assets["meteor"]);
+		meteors.emplace_back(Meteor(assets["meteor"]));
 	}
 
 	void ShootLaser(Vector2 pos) {
@@ -42,15 +43,20 @@ public:
 		// Update
 
 		meteor_timer.Update();
-		for(auto& sprite : sprites) {
+		for(auto sprite : sprites) {
 			sprite->Update(delta_time);
 		}
 
+		meteors.erase(
+			std::remove_if(meteors.begin(), meteors.end(),
+				[](const Meteor& m) { return m.discard; }
+			),
+			meteors.end()
+		);
+
 		for (auto& meteor : meteors) {
-			meteors->Update();
+			meteor.Update(delta_time);
 		}
-
-
 
 		lasers.erase(
 			std::remove_if(lasers.begin(), lasers.end(),
@@ -60,9 +66,10 @@ public:
 		);
 
 		for(auto& laser : lasers) {
-
 			laser.Update(delta_time);
 		}
+
+		CheckCollision();
 	}
 
 	void Draw() {
@@ -76,7 +83,33 @@ public:
 		for(auto& laser : lasers) {
 			laser.Draw();
 		}
+		for (auto& meteor : meteors) {
+			meteor.Draw();
+		}
 		EndDrawing();
+	}
+
+	void CheckCollision() {
+		for(auto& laser : lasers) {
+			for(auto& meteor: meteors) {
+				if(CheckCollisionCircleRec(meteor.GetCenter(),
+				meteor.collision_radius,laser.GetRectange())) {
+					laser.discard = true;
+					meteor.discard = true;
+				}
+			}
+		}
+
+
+		// player and meteor
+		for(auto& meteor : meteors) {
+			if(CheckCollisionCircles(player->GetCenter(),player->collision_radius,
+				meteor.GetCenter(),meteor.collision_radius)) {
+					CloseWindow();
+				}
+		}
+		
+
 	}
 
 	void Run() {
@@ -91,9 +124,11 @@ public:
 		std::unordered_map<std::string,Texture2D> assets;
 		std::vector<Laser> lasers;
 		std::vector<Meteor> meteors;
-
 		std::vector<Sprite*> sprites;
+
 		std::vector<Star> stars;
+
+		Player* player;
 
 		Timer meteor_timer;
 
@@ -110,7 +145,7 @@ public:
 		}
 
 		void DrawStars() {
-			for(auto star : stars) {
+			for(auto& star : stars) {
 				DrawTextureEx(assets["star"],star.position, 0, star.size,WHITE);
 			}
 		}

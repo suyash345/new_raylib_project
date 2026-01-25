@@ -6,8 +6,10 @@ class Sprite {
 	public:
 		Sprite(Texture2D texture, Vector2 position, float speed, Vector2 direction)  : texture(texture), position(position), speed(speed), direction(direction), 
 															size{float(texture.width),float(texture.height)} {
-			
+			collision_radius = size.y/2.0f;
 		}
+		virtual ~Sprite() = default;
+
 		virtual void Update(float delta_time) = 0;
 		virtual void Draw() = 0;
 		virtual void Move(float delta_time) {
@@ -15,13 +17,26 @@ class Sprite {
 			position.y += direction.y * delta_time * speed;
 		}
 
-		virtual ~Sprite() = default;
+		virtual void Discard() {
+			if (position.x < 0 || position.x > Config::WIDTH || position.y < 0 || position.y > Config::HEIGHT) {
+				discard = true;
+			}
+		}
+
+		Vector2 GetCenter() {
+			return Vector2 {position.x + size.x /2,
+							position.y + size.y/2};
+		}
+
+		bool discard = false;
+		float collision_radius = 0.0f;
+
 	protected:
 		Vector2 direction;
 		Texture2D texture;
 		Vector2 position = {100.0f,100.0f};
 		float speed;
-		Vector2 size = {0.0f,0.0f}; 
+		Vector2 size = {0.0f,0.0f};
 };
 
 
@@ -55,6 +70,8 @@ public:
 		position.y = Clamp(position.y,0,Config::HEIGHT-size.y);
 	}
 
+	
+
 	private:
 		std::function<void(Vector2)> call_back;	
 };
@@ -67,19 +84,16 @@ class Laser : public Sprite {
 			size = { float(texture.width), float(texture.height) };
 		}
 		void Update(float delta_time) {
-
 			Move(delta_time);
+			Discard();
 		}
 		void Draw() {
 			DrawTexture(texture, position.x - texture.width /2 , position.y, WHITE);
 		} 
-
-		void Discard() {
-			if (position.x < 0 || position.x > Config::WIDTH || position.y < 0 || position.y > Config::HEIGHT) {
-				discard = true;
-			}
+		Rectangle GetRectange() {
+			return Rectangle{position.x,position.y,size.x,size.y};
 		}
-		bool discard = false;
+
 };
 
 
@@ -92,6 +106,29 @@ public:
 			{ 0.1f * float(GetRandomValue(-5,5)), 1.0f })
 	{
 	}
-	
 
+	void Update(float delta_time) {
+		Move(delta_time);
+		Discard();
+		rotation += GetRandomValue(10,100) * delta_time;
+	}
+
+	void Draw() {
+		Rectangle target_rect = Rectangle{position.x,position.y,size.x,size.y};
+		DrawTexturePro(texture,rec,target_rect,Vector2{size.x/2,size.y/2},rotation,WHITE);
+	}
+
+	virtual void Discard() {
+		if (position.x > Config::WIDTH  || position.y > Config::HEIGHT) {
+			discard = true;
+		}
+	}
+	virtual Vector2 GetCenter() {
+		return position;
+	}
+
+
+	private:
+		float rotation = 0;
+		Rectangle rec{0,0,size.x,size.y};
 };
