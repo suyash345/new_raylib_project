@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 #include "Config.h"
 
 class Sprite {
@@ -26,7 +28,7 @@ class Sprite {
 
 class Player : public Sprite {
 public:
-	Player(Texture2D texture, Vector2 position, shoot_laser) : Sprite (texture, position), shoot_laser(shoot_laser){
+	Player(Texture2D texture, Vector2 position, std::function<void(Vector2)>shoot_laser) : Sprite (texture, position), call_back(shoot_laser){
 
 	}
 	virtual ~Player() = default;
@@ -37,7 +39,7 @@ public:
     		direction = Vector2Normalize(direction);
 		}
 		if(IsKeyPressed(KEY_SPACE)) {
-			return;
+			call_back(position);
 		}
 
 	}
@@ -55,6 +57,5 @@ public:
 	}
 
 	private:
-		shoot_laser;
-
+		std::function<void(Vector2)> call_back;	
 };

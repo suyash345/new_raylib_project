@@ -28,7 +28,7 @@ public:
 		}
 	}
 
-	void ShootLaser(Vector2 pos) {
+	static void ShootLaser(Vector2 pos) {
 		 std::cout << "Create Laser" << std::endl;
 	}
 	void Update() {
