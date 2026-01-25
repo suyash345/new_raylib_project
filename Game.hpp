@@ -29,16 +29,25 @@ public:
 	}
 
 	void ShootLaser(Vector2 pos) {
-		std::cout << "Laser" << std::endl;
-		lasers.emplace_back(Laser(assets["laser"], pos));
+		lasers.emplace_back(Laser(assets["laser"], pos)); // in place.
 	}
+
 	void Update() {
 		float delta_time = GetFrameTime();
 		// Update
 		for(auto& sprite : sprites) {
 			sprite->Update(delta_time);
 		}
+
+		lasers.erase(
+			std::remove_if(lasers.begin(), lasers.end(),
+				[](const Laser& l) { return l.discard; }
+			),
+			lasers.end()
+		);
+
 		for(auto& laser : lasers) {
+
 			laser.Update(delta_time);
 		}
 	}

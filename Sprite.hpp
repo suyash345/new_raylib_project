@@ -16,6 +16,7 @@ class Sprite {
 			position.x += direction.x * delta_time * speed;
 			position.y += direction.y * delta_time * speed;
 		}
+
 		virtual ~Sprite() = default;
 	protected:
 		Vector2 direction;
@@ -39,7 +40,7 @@ public:
     		direction = Vector2Normalize(direction);
 		}
 		if(IsKeyPressed(KEY_SPACE)) {
-			call_back({1000,600});
+			call_back({position.x + size.x/2, position.y - 50});
 		}
 
 	}
@@ -63,13 +64,22 @@ public:
 
 class Laser : public Sprite {
 	public:
-		Laser(Texture2D texture, Vector2 pos) : Sprite(texture,pos,Config::LASER_SPEED,{0,-1}) {
+		Laser(Texture2D texture, Vector2 pos) : Sprite(texture,pos,Config::LASER_SPEED,{0,-1}) 
+		{
+			size = { float(texture.width), float(texture.height) };
 		}
 		void Update(float delta_time) {
-			return;
+
+			Move(delta_time);
 		}
 		void Draw() {
-			return;
+			DrawTexture(texture, position.x - texture.width /2 , position.y, WHITE);
 		} 
 
+		void Discard() {
+			if (position.x < 0 || position.x > Config::WIDTH || position.y < 0 || position.y > Config::HEIGHT) {
+				discard = true;
+			}
+		}
+		bool discard = false;
 };
