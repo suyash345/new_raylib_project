@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Config.h"
 #include "Sprite.hpp"
 
 
@@ -15,6 +14,8 @@ public:
 		InitWindow(Config::WIDTH, Config::HEIGHT, "2D Game");
 		ImportAssets();
 
+		meteor_timer = Timer(Config::METEOR_TIMER_DURATION, true, true, [this]() {CreateMeteor();});
+
 		Player* p = new Player(assets["player"], Vector2{ Config::WIDTH / 2,Config::HEIGHT / 2 }, [this](Vector2 pos) { this->ShootLaser(pos); });
 		sprites.push_back(p);
 	}
@@ -28,6 +29,10 @@ public:
 		}
 	}
 
+	void CreateMeteor() { // cant pass this in direction, as it is a part of the class, and needs a "this" keyword. Therefore, you need to either make it static or use a lambda which then calls the function.
+		std::cout << "Create Meteor" << std::endl;
+	}
+
 	void ShootLaser(Vector2 pos) {
 		lasers.emplace_back(Laser(assets["laser"], pos)); // in place.
 	}
@@ -35,9 +40,13 @@ public:
 	void Update() {
 		float delta_time = GetFrameTime();
 		// Update
+
+		meteor_timer.Update();
 		for(auto& sprite : sprites) {
 			sprite->Update(delta_time);
 		}
+
+
 
 		lasers.erase(
 			std::remove_if(lasers.begin(), lasers.end(),
@@ -80,6 +89,8 @@ public:
 
 		std::vector<Sprite*> sprites;
 		std::vector<Asteroid> asteroids;
+
+		Timer meteor_timer;
 
 		void ImportAssets() {
 			assets["player"]  = LoadTexture("Images/spaceship.png");

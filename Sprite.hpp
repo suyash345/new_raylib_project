@@ -1,7 +1,5 @@
 #pragma once
 
-#include <functional>
-
 #include "Config.h"
 
 class Sprite {
