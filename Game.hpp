@@ -85,6 +85,7 @@ public:
 			assets["player"]  = LoadTexture("Images/spaceship.png");
             assets["star"] = LoadTexture("Images/star.png");
 			assets["laser"] = LoadTexture("Images/laser.png");
+			assets["meteor"] = LoadTexture("Images/meteor.png");
             for(int i = 0; i < 100; ++i) {
 				Vector2 vec{(float)GetRandomValue(0,Config::WIDTH),(float)GetRandomValue(0,Config::HEIGHT)}; // pos
 				float random_size = float(GetRandomValue(5,16)*0.10);
