@@ -81,3 +81,16 @@ class Laser : public Sprite {
 		}
 		bool discard = false;
 };
+
+
+class Meteor : public Sprite{
+public:
+	Meteor(Texture2D texture)
+		: Sprite(texture,
+			{ float(GetRandomValue(0, Config::WIDTH)), float(GetRandomValue(-150, -50)) },
+			float(GetRandomValue(300, 400)),
+			{ 0.1f * float(GetRandomValue(-5,5)), 1.0f })
+	{
+	}
+
+};

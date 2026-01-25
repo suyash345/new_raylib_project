@@ -3,7 +3,7 @@
 #include "Sprite.hpp"
 
 
-struct Asteroid {
+struct Star {
 	Vector2 position;
 	float size;
 };
@@ -88,7 +88,7 @@ public:
 		std::vector<Laser> lasers;
 
 		std::vector<Sprite*> sprites;
-		std::vector<Asteroid> asteroids;
+		std::vector<Star> stars;
 
 		Timer meteor_timer;
 
@@ -100,12 +100,12 @@ public:
             for(int i = 0; i < 100; ++i) {
 				Vector2 vec{(float)GetRandomValue(0,Config::WIDTH),(float)GetRandomValue(0,Config::HEIGHT)}; // pos
 				float random_size = float(GetRandomValue(5,16)*0.10);
-				asteroids.push_back({vec,random_size});
+				stars.push_back({vec,random_size});
 			}
 		}
 
 		void DrawStars() {
-			for(auto star :asteroids) {
+			for(auto star : stars) {
 				DrawTextureEx(assets["star"],star.position, 0, star.size,WHITE);
 			}
 		}
