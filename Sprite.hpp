@@ -6,7 +6,7 @@
 
 class Sprite {
 	public:
-		Sprite(Texture2D texture, Vector2 position)  : texture(texture), position(position), 
+		Sprite(Texture2D texture, Vector2 position, float speed, Vector2 direction)  : texture(texture), position(position), speed(speed), direction(direction), 
 															size{float(texture.width),float(texture.height)} {
 			
 		}
@@ -18,17 +18,17 @@ class Sprite {
 		}
 		virtual ~Sprite() = default;
 	protected:
-		Vector2 direction = {0.0f,0.0f};
+		Vector2 direction;
 		Texture2D texture;
 		Vector2 position = {100.0f,100.0f};
-		float speed = 500.0f;
+		float speed;
 		Vector2 size = {0.0f,0.0f}; 
 };
 
 
 class Player : public Sprite {
 public:
-	Player(Texture2D texture, Vector2 position, std::function<void(Vector2)>shoot_laser) : Sprite (texture, position), call_back(shoot_laser){
+	Player(Texture2D texture, Vector2 position, std::function<void(Vector2)>shoot_laser) : Sprite (texture, position,500,{0.0f,0.0f}), call_back(shoot_laser){
 
 	}
 	virtual ~Player() = default;
@@ -39,7 +39,7 @@ public:
     		direction = Vector2Normalize(direction);
 		}
 		if(IsKeyPressed(KEY_SPACE)) {
-			call_back(position);
+			call_back({1000,600});
 		}
 
 	}
@@ -58,4 +58,18 @@ public:
 
 	private:
 		std::function<void(Vector2)> call_back;	
+};
+
+
+class Laser : public Sprite {
+	public:
+		Laser(Texture2D texture, Vector2 pos) : Sprite(texture,pos,Config::LASER_SPEED,{0,-1}) {
+		}
+		void Update(float delta_time) {
+			return;
+		}
+		void Draw() {
+			return;
+		} 
+
 };

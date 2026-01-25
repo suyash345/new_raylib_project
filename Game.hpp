@@ -29,13 +29,17 @@ public:
 	}
 
 	static void ShootLaser(Vector2 pos) {
-		 std::cout << "Create Laser" << std::endl;
+		Laser laser = Laser(assets["laser"],pos);
+		lasers.push_back(laser);
 	}
 	void Update() {
 		float delta_time = GetFrameTime();
 		// Update
 		for(auto sprite : sprites) {
 			sprite->Update(delta_time);
+		}
+		for(auto laser : lasers) {
+			laser.Update(delta_time);
 		}
 	}
 
@@ -46,6 +50,9 @@ public:
 		DrawStars();
 		for(auto sprite : sprites) {
 			sprite->Draw();	
+		}
+		for(auto laser : lasers) {
+			laser.Draw();
 		}
 		EndDrawing();
 	}
@@ -59,13 +66,16 @@ public:
 	}
 	
 	private:
-		std::unordered_map<std::string,Texture2D> assets;
+		static std::unordered_map<std::string,Texture2D> assets;
+		static std::vector<Laser> lasers;
+
 		std::vector<Sprite*> sprites;
 		std::vector<Asteroid> asteroids;
 
 		void ImportAssets() {
 			assets["player"]  = LoadTexture("Images/spaceship.png");
             assets["star"] = LoadTexture("Images/star.png");
+			assets["laser"] = LoadTexture("Images/laser.png");
             for(int i = 0; i < 100; ++i) {
 				Vector2 vec{(float)GetRandomValue(0,Config::WIDTH),(float)GetRandomValue(0,Config::HEIGHT)}; // pos
 				float random_size = float(GetRandomValue(5,16)*0.10);
@@ -79,3 +89,4 @@ public:
 			}
 		}
 };
+

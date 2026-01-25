@@ -13,6 +13,7 @@ namespace Config
     inline constexpr Color BG_COLOR = {15,10,25,255};
 	inline constexpr int WIDTH = 1920;
     inline constexpr int HEIGHT = 1080;
+    inline constexpr float LASER_SPEED = 700;
 } // namespace Config
 
 		
