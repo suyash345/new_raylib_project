@@ -15,7 +15,7 @@ public:
 		InitWindow(Config::WIDTH, Config::HEIGHT, "2D Game");
 		ImportAssets();
 
-		Player * p = new Player(assets["player"],Vector2{Config::WIDTH/2,Config::HEIGHT/2}, ShootLaser);
+		Player* p = new Player(assets["player"], Vector2{ Config::WIDTH / 2,Config::HEIGHT / 2 }, [this](Vector2 pos) { this->ShootLaser(pos); });
 		sprites.push_back(p);
 	}
 
@@ -28,17 +28,17 @@ public:
 		}
 	}
 
-	static void ShootLaser(Vector2 pos) {
-		Laser laser = Laser(assets["laser"],pos);
-		lasers.push_back(laser);
+	void ShootLaser(Vector2 pos) {
+		std::cout << "Laser" << std::endl;
+		lasers.emplace_back(Laser(assets["laser"], pos));
 	}
 	void Update() {
 		float delta_time = GetFrameTime();
 		// Update
-		for(auto sprite : sprites) {
+		for(auto& sprite : sprites) {
 			sprite->Update(delta_time);
 		}
-		for(auto laser : lasers) {
+		for(auto& laser : lasers) {
 			laser.Update(delta_time);
 		}
 	}
@@ -48,10 +48,10 @@ public:
 		BeginDrawing();
 		ClearBackground(Config::BG_COLOR);
 		DrawStars();
-		for(auto sprite : sprites) {
+		for(auto& sprite : sprites) {
 			sprite->Draw();	
 		}
-		for(auto laser : lasers) {
+		for(auto& laser : lasers) {
 			laser.Draw();
 		}
 		EndDrawing();
@@ -66,8 +66,8 @@ public:
 	}
 	
 	private:
-		static std::unordered_map<std::string,Texture2D> assets;
-		static std::vector<Laser> lasers;
+		std::unordered_map<std::string,Texture2D> assets;
+		std::vector<Laser> lasers;
 
 		std::vector<Sprite*> sprites;
 		std::vector<Asteroid> asteroids;
