@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include "Sprite.hpp"
+#include "Explosion.hpp"
 
 struct Star {
 	Vector2 position;
@@ -19,6 +20,7 @@ public:
 
 		player = new Player(assets["player"], Vector2{ Config::WIDTH / 2,Config::HEIGHT / 2 }, [this](Vector2 pos) { this->ShootLaser(pos); });
 		sprites.push_back(player);
+
 	}
 
 	~Game() {
@@ -69,6 +71,18 @@ public:
 			laser.Update(delta_time);
 		}
 
+		explosions.erase(
+			std::remove_if(explosions.begin(), explosions.end(),
+				[](const ExplosionAnimation& e) { return e.discard; }
+			),
+			explosions.end()
+		);
+
+		for(auto& expolosion : explosions) {
+			expolosion.Update(delta_time);
+
+		}
+
 		CheckCollision();
 	}
 
@@ -86,6 +100,10 @@ public:
 		for (auto& meteor : meteors) {
 			meteor.Draw();
 		}
+		for (auto& explosion : explosions) {
+		    explosion.Draw();
+		}
+
 		EndDrawing();
 	}
 
@@ -96,6 +114,8 @@ public:
 				meteor.collision_radius,laser.GetRectange())) {
 					laser.discard = true;
 					meteor.discard = true;
+					Vector2 pos{laser.position.x - laser.size.x,laser.position.y};
+					explosions.push_back(ExplosionAnimation(pos,explosion_textures));
 				}
 			}
 		}
@@ -122,6 +142,8 @@ public:
 	
 	private:
 		std::unordered_map<std::string,Texture2D> assets;
+		std::vector<ExplosionAnimation> explosions;
+		std::vector<Texture2D> explosion_textures;
 		std::vector<Laser> lasers;
 		std::vector<Meteor> meteors;
 		std::vector<Sprite*> sprites;
@@ -141,6 +163,10 @@ public:
 				Vector2 vec{(float)GetRandomValue(0,Config::WIDTH),(float)GetRandomValue(0,Config::HEIGHT)}; // pos
 				float random_size = float(GetRandomValue(5,16)*0.10);
 				stars.push_back({vec,random_size});
+			}
+			for(int i = 1; i<=28; ++i) {
+				std::string path = "Images/explosion/" + std::to_string(i) + ".png";
+				explosion_textures.push_back(LoadTexture(path.c_str()));
 			}
 		}
 

@@ -30,13 +30,12 @@ class Sprite {
 
 		bool discard = false;
 		float collision_radius = 0.0f;
-
+		Vector2 position = {100.0f,100.0f};
+		Vector2 size = {0.0f,0.0f};
 	protected:
 		Vector2 direction;
 		Texture2D texture;
-		Vector2 position = {100.0f,100.0f};
 		float speed;
-		Vector2 size = {0.0f,0.0f};
 };
 
 
