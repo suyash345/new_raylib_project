@@ -57,6 +57,7 @@ namespace Config{
     inline constexpr int HEIGHT = 1080;
     inline constexpr float LASER_SPEED = 700;
     inline constexpr double METEOR_TIMER_DURATION = 0.4;
+    inline constexpr int FONT_SIZE = 120;
 } // namespace Config
 
 		

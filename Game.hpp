@@ -91,6 +91,7 @@ public:
 		BeginDrawing();
 		ClearBackground(Config::BG_COLOR);
 		DrawStars();
+		DrawScore();
 		for(auto& sprite : sprites) {
 			sprite->Draw();	
 		}
@@ -116,6 +117,7 @@ public:
 					meteor.discard = true;
 					Vector2 pos{laser.position.x - laser.size.x,laser.position.y};
 					explosions.push_back(ExplosionAnimation(pos,explosion_textures));
+					Increment();
 				}
 			}
 		}
@@ -139,6 +141,29 @@ public:
 		}
 		CloseWindow();
 	}
+	void DrawScore() {
+		std::string text = std::to_string(score);
+
+		Vector2 size = MeasureTextEx(
+			font,
+			text.c_str(),
+			Config::FONT_SIZE,
+			0
+		);
+
+		DrawTextEx(
+			font,
+			text.c_str(),
+			{ Config::WIDTH/2 - size.x/2, 100 }, // 20px padding
+			Config::FONT_SIZE,
+			0,
+			WHITE
+		);
+	}
+
+	static void Increment() {
+		score++;
+	}
 	
 	private:
 		std::unordered_map<std::string,Texture2D> assets;
@@ -147,7 +172,7 @@ public:
 		std::vector<Laser> lasers;
 		std::vector<Meteor> meteors;
 		std::vector<Sprite*> sprites;
-
+		Font font;
 		std::vector<Star> stars;
 
 		Player* player;
@@ -159,6 +184,9 @@ public:
             assets["star"] = LoadTexture("Images/star.png");
 			assets["laser"] = LoadTexture("Images/laser.png");
 			assets["meteor"] = LoadTexture("Images/meteor.png");
+			
+			font = LoadFontEx("Font/Stormfaze.otf",Config::FONT_SIZE,nullptr,0);
+
             for(int i = 0; i < 100; ++i) {
 				Vector2 vec{(float)GetRandomValue(0,Config::WIDTH),(float)GetRandomValue(0,Config::HEIGHT)}; // pos
 				float random_size = float(GetRandomValue(5,16)*0.10);
@@ -175,5 +203,7 @@ public:
 				DrawTextureEx(assets["star"],star.position, 0, star.size,WHITE);
 			}
 		}
+
+		static inline int score = 0;
 };
 
