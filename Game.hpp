@@ -30,6 +30,7 @@ public:
 		for(auto& sprite : sprites) {
 			delete sprite;
 		}
+		UnloadSound(laser_sound);
 	}
 
 	void CreateMeteor() { // cant pass this in direction, as it is a part of the class, and needs a "this" keyword. Therefore, you need to either make it static or use a lambda which then calls the function.
@@ -37,6 +38,8 @@ public:
 	}
 
 	void ShootLaser(Vector2 pos) {
+
+		PlaySound(laser_sound);
 		lasers.emplace_back(Laser(assets["laser"], pos)); // in place.
 	}
 
@@ -82,7 +85,6 @@ public:
 			expolosion.Update(delta_time);
 
 		}
-
 		CheckCollision();
 	}
 
@@ -118,6 +120,7 @@ public:
 					Vector2 pos{laser.position.x - laser.size.x,laser.position.y};
 					explosions.push_back(ExplosionAnimation(pos,explosion_textures));
 					Increment();
+					PlaySound(explosion_sound);
 				}
 			}
 		}
@@ -174,12 +177,15 @@ public:
 		std::vector<Sprite*> sprites;
 		Font font;
 		std::vector<Star> stars;
+		Sound laser_sound;
+		Sound explosion_sound;
 
 		Player* player;
 
 		Timer meteor_timer;
 
 		void ImportAssets() {
+			 InitAudioDevice();     
 			assets["player"]  = LoadTexture("Images/spaceship.png");
             assets["star"] = LoadTexture("Images/star.png");
 			assets["laser"] = LoadTexture("Images/laser.png");
@@ -196,6 +202,9 @@ public:
 				std::string path = "Images/explosion/" + std::to_string(i) + ".png";
 				explosion_textures.push_back(LoadTexture(path.c_str()));
 			}
+			laser_sound = LoadSound("Sound/laser.wav");
+			explosion_sound = LoadSound("Sound/explosion.wav");
+
 		}
 
 		void DrawStars() {
