@@ -130,11 +130,14 @@ public:
 		for(auto& meteor : meteors) {
 			if(CheckCollisionCircles(player->GetCenter(),player->collision_radius,
 				meteor.GetCenter(),meteor.collision_radius)) {
-					CloseWindow();
+					ResetScore();
 				}
 		}
 		
 
+	}
+	static void ResetScore() {
+		score = 0;
 	}
 
 	void Run() {
